@@ -1,0 +1,31 @@
+name: Qualité
+
+on: [push, pull_request]
+
+jobs:
+  qualite:
+    runs-on: ubuntu-latest
+    env:
+      DATABASE_USER: root
+      DATABASE_PASSWORD: root
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: pcov
+
+      - name: Base de données de test
+        run: |
+          sudo systemctl start mysql
+          mysql -uroot -proot -e "CREATE DATABASE grand_cinema_test"
+
+      - name: Dépendances
+        run: composer install --no-progress
+
+      - name: Analyse statique (PHPStan)
+        run: composer qualite
+
+      - name: Tests et couverture (PHPUnit)
+        run: composer tests
