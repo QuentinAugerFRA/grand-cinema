@@ -6,6 +6,11 @@ Les versions suivent la gestion sémantique de version : MAJEUR.MINEUR.CORRECTIF
 - MINEUR : nouvelle fonctionnalité, compatible avec l'existant.
 - CORRECTIF : correction d'anomalie.
 
+## 1.1.0 – 20/11/2026
+
+- Interface : dégradés légers, ombre sur les cartes des films.
+- Back-office : formulaire de contrôle du billet centré.
+
 ## 1.0.0 – 17/11/2026
 
 Première version : le MVP et les deux user stories d'évolution.
