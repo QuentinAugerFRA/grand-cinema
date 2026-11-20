@@ -6,6 +6,10 @@ Les versions suivent la gestion sémantique de version : MAJEUR.MINEUR.CORRECTIF
 - MINEUR : nouvelle fonctionnalité, compatible avec l'existant.
 - CORRECTIF : correction d'anomalie.
 
+## 1.1.3 – 20/11/2026
+
+- Plan de salle : la taille des places s'adapte à la hauteur de l'écran, salle centrée.
+
 ## 1.1.2 – 20/11/2026
 
 - Interface : icônes alignées verticalement avec le texte.
