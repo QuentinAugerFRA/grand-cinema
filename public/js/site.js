@@ -86,8 +86,10 @@ async function afficherPlan(film, seance, premierJour)
     changerVue(`
         <h2>${echapper(film.titre)}</h2>
         <p>${icone('event')}${formaterDate(seance.debut)} · ${icone('meeting_room')}${echapper(seance.salle)} ${badgeSalle(seance.type_salle)}</p>
-        <p class="ecran">Écran</p>
-        <div id="plan"></div>
+        <div class="salle">
+            <p class="ecran">Écran</p>
+            <div id="plan"></div>
+        </div>
         <p class="legende">
             <span class="place"></span>Libre
             <span class="place choisie"></span>Votre sélection
@@ -103,7 +105,10 @@ async function afficherPlan(film, seance, premierJour)
     {
         const placesParRangee = places.filter((place) => place.rangee === 'A').length;
         const placesParBloc = Math.ceil(placesParRangee / seance.nombre_blocs);
-        plan.style.gridTemplateColumns = `repeat(${placesParRangee + seance.nombre_blocs - 1}, 1fr)`;
+        const colonnes = placesParRangee + seance.nombre_blocs - 1;
+        plan.style.gridTemplateColumns = `repeat(${colonnes}, 1fr)`;
+        plan.parentElement.style.setProperty('--colonnes', colonnes);
+        plan.parentElement.style.setProperty('--rangees', new Set(places.map((place) => place.rangee)).size);
         plan.innerHTML = places.map((place) =>
         {
             const ligne = place.rangee.charCodeAt(0) - 64;
