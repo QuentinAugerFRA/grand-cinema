@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Le Grand Cinéma – Administration</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <a href="admin.html"><span class="material-icons">movie</span>Administration</a>
+        <a href="index.html"><span class="material-icons">arrow_back</span>Retour au site</a>
+        <button id="boutonCompte"></button>
+    </header>
+
+    <nav>
+        <button data-onglet="films"><span class="material-icons">movie</span>Films</button>
+        <button data-onglet="seances"><span class="material-icons">event</span>Séances</button>
+        <button data-onglet="reservations"><span class="material-icons">confirmation_number</span>Réservations</button>
+        <button data-onglet="controle"><span class="material-icons">qr_code_scanner</span>Contrôle</button>
+        <button data-onglet="statistiques"><span class="material-icons">insights</span>Statistiques</button>
+    </nav>
+
+    <main>
+        <section id="films">
+            <button id="boutonAjouterFilm"><span class="material-icons">add</span>Ajouter un film</button>
+            <table id="tableFilms"></table>
+        </section>
+
+        <section id="seances">
+            <button id="boutonPlanifierSeance"><span class="material-icons">event_available</span>Planifier une séance</button>
+            <table id="tableSeances"></table>
+        </section>
+
+        <section id="reservations">
+            <form id="formulaireRecherche">
+                <input name="jour" type="date" required>
+                <select name="seanceId"></select>
+                <input name="recherche" placeholder="E-mail ou numéro de réservation">
+            </form>
+            <p id="ventes"></p>
+            <table id="tableReservations"></table>
+        </section>
+
+        <section id="controle">
+            <h2><span class="material-icons">qr_code_scanner</span>Contrôle et validation du billet</h2>
+            <form id="formulaireControle" class="vertical">
+                <label>Date<input name="jour" type="date" required></label>
+                <label>Séance<select name="seanceId" required></select></label>
+                <label>Code du billet<input name="code" required></label>
+                <button><span class="material-icons">check_circle</span>Valider le billet</button>
+            </form>
+            <p id="resultatControle"></p>
+        </section>
+
+        <section id="statistiques">
+            <form id="formulairePeriode">
+                <input name="debut" type="date" required>
+                <input name="fin" type="date" required>
+                <select name="regroupement">
+                    <option value="seance">Par séance</option>
+                    <option value="salle">Par salle</option>
+                </select>
+                <button><span class="material-icons">search</span>Afficher</button>
+                <a id="lienCsv" class="bouton secondaire"><span class="material-icons">download</span>Export CSV</a>
+            </form>
+            <table id="tableRemplissage"></table>
+            <h2><span class="material-icons">insights</span>Affluence par jour et par heure</h2>
+            <table id="tableAffluence"></table>
+        </section>
+    </main>
+
+    <dialog id="fenetreFilm">
+        <form id="formulaireFilm">
+            <h2 id="titreFilm">Ajouter un film</h2>
+            <label>Titre<input name="titre" required></label>
+            <label>Durée en minutes<input name="dureeMinutes" type="number" min="1" required></label>
+            <label>Genre<input name="genre" required></label>
+            <label>Affiche (JPEG, PNG ou WebP, 2 Mo maximum)<input name="fichierAffiche" type="file" accept="image/jpeg,image/png,image/webp"></label>
+            <button><span class="material-icons">save</span>Enregistrer</button>
+            <button type="button" class="discret fermer"><span class="material-icons">close</span>Fermer</button>
+        </form>
+    </dialog>
+
+    <dialog id="fenetreSeance">
+        <form id="formulaireSeance">
+            <h2>Planifier une séance</h2>
+            <label>Film<select name="filmId" required></select></label>
+            <label>Salle<select name="salleId" required></select></label>
+            <label>Début<input name="debut" type="datetime-local" required></label>
+            <label>Tarif en euros<input name="tarif" type="number" min="0.01" step="0.01" value="9" required></label>
+            <button><span class="material-icons">event_available</span>Planifier</button>
+            <button type="button" class="discret fermer"><span class="material-icons">close</span>Fermer</button>
+        </form>
+    </dialog>
+
+    <dialog id="fenetreConfirmation">
+        <form method="dialog">
+            <h2>Confirmation</h2>
+            <p id="questionConfirmation"></p>
+            <button value="oui"><span class="material-icons">check</span>Confirmer</button>
+            <button value="non" class="discret"><span class="material-icons">close</span>Annuler</button>
+        </form>
+    </dialog>
+
+    <dialog id="fenetreConnexion">
+        <form id="formulaireConnexion">
+            <h2 id="titreConnexion">Connexion</h2>
+            <input name="email" type="email" placeholder="Adresse e-mail" required>
+            <input name="motDePasse" type="password" placeholder="Mot de passe (8 caractères minimum)" minlength="8" required>
+            <p id="informationInscription" hidden>En production, un e-mail de confirmation sera envoyé. Ici, le compte est activé immédiatement.</p>
+            <button id="boutonValider"><span class="material-icons">login</span>Se connecter</button>
+            <button type="button" class="discret fermer"><span class="material-icons">close</span>Fermer</button>
+        </form>
+    </dialog>
+    <footer>
+        Le Grand Cinéma – version <span id="version"></span> · Réalisé par Quentin Auger en 2026 · <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
+    <p id="message" popover="manual"></p>
+
+    <script src="js/commun.js"></script>
+    <script src="js/admin.js"></script>
+</body>
+</html>
