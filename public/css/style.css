@@ -81,6 +81,12 @@ button, .bouton
     font: inherit;
     text-decoration: none;
     cursor: pointer;
+    transition: filter .15s;
+}
+
+button:not(:disabled):hover, .bouton:hover
+{
+    filter: brightness(1.12);
 }
 
 button:disabled

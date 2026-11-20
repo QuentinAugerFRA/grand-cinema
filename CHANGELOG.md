@@ -6,6 +6,10 @@ Les versions suivent la gestion sémantique de version : MAJEUR.MINEUR.CORRECTIF
 - MINEUR : nouvelle fonctionnalité, compatible avec l'existant.
 - CORRECTIF : correction d'anomalie.
 
+## 1.1.1 – 20/11/2026
+
+- Interface : boutons éclaircis au survol.
+
 ## 1.1.0 – 20/11/2026
 
 - Interface : dégradés légers, ombre sur les cartes des films.

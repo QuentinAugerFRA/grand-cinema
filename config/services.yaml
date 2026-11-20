@@ -1,6 +1,6 @@
 # Numéro de version de l'application (MAJEUR.MINEUR.CORRECTIF), affiché en pied de page
 parameters:
-    version_application: '1.1.0'
+    version_application: '1.1.1'
 
 services:
     _defaults:
