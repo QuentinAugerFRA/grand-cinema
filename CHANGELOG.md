@@ -6,6 +6,11 @@ Les versions suivent la gestion sémantique de version : MAJEUR.MINEUR.CORRECTIF
 - MINEUR : nouvelle fonctionnalité, compatible avec l'existant.
 - CORRECTIF : correction d'anomalie.
 
+## 1.2.0 – 20/11/2026
+
+- Chaque vue a sa propre adresse : `/film/3`, `/film/3/seance/45`, `/billet/code`, `/admin/seances`.
+- Le rechargement de la page et le bouton Précédent du navigateur conservent la vue affichée.
+
 ## 1.1.3 – 20/11/2026
 
 - Plan de salle : la taille des places s'adapte à la hauteur de l'écran, salle centrée.

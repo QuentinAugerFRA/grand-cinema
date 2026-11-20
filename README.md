@@ -45,6 +45,8 @@ Les identifiants de la base se règlent dans un fichier `.env.local`, qui n'est 
 | Back-office | http://localhost:8000/admin |
 | Documentation de l'API | http://localhost:8000/documentation |
 
+Chaque vue a sa propre adresse (`/film/3`, `/film/3/seance/45`, `/admin/seances`). Ces adresses sont servies par les règles de `public/.htaccess` : avec le serveur de développement `php -S`, la navigation fonctionne, mais le rechargement d'une de ces adresses demande Apache.
+
 ## Comptes de démonstration
 
 | Rôle | Login | Mot de passe |

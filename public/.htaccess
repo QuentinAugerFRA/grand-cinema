@@ -25,7 +25,10 @@ RewriteCond %{THE_REQUEST} \s/([^.\s?/]+)\.html[\s?]
 RewriteRule ^ /%1 [R=301,L]
 
 # /admin sert le fichier admin.html, / sert index.html
+# Les adresses des vues (/film/3, /billet/code, /admin/seances) servent la page qui les affiche
 RewriteRule ^$ index.html [L]
+RewriteRule ^(film|billet)/ index.html [L]
+RewriteRule ^admin/ admin.html [L]
 RewriteCond %{DOCUMENT_ROOT}/$1.html -f
 RewriteRule ^([^./]+)$ $1.html [L]
 
