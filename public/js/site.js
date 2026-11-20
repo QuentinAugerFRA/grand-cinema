@@ -6,6 +6,31 @@ const JOURS_PAR_PAGE = 7;
 const ICONES_SALLES = { 'Premium / IMAX': 'star', 'VIP': 'workspace_premium', 'Événementielle / modulable': 'celebration' };
 let rafraichissement = null;
 
+// Chaque vue a sa propre adresse : /, /film/3, /film/3/seance/45, /billet/code
+// La semaine affichée est gardée dans l'historique du navigateur, pas dans l'adresse
+function naviguer(adresse, premierJour = 0)
+{
+    history.pushState({ premierJour }, '', adresse);
+    afficherPage();
+}
+
+async function afficherPage()
+{
+    const [vue, identifiant, , seanceId] = location.pathname.split('/').filter(Boolean);
+    const premierJour = history.state?.premierJour ?? 0;
+    if (vue === 'billet')
+    {
+        return afficherBillet(await appelerApi('GET', `billets/${identifiant}`));
+    }
+    const film = vue === 'film' && (await appelerApi('GET', 'films')).find((film) => film.id === Number(identifiant));
+    if (!film)
+    {
+        return afficherFilms();
+    }
+    const seance = seanceId && (await appelerApi('GET', `films/${film.id}/seances`)).find((seance) => seance.id === Number(seanceId));
+    seance ? afficherPlan(film, seance, premierJour) : afficherSeances(film, premierJour);
+}
+
 // Affiche une vue, avec un bouton de retour vers la vue précédente
 function changerVue(html, retour)
 {
@@ -44,7 +69,7 @@ async function afficherFilms()
             <p>${echapper(film.genre)}</p>
             <p>${icone('schedule')}${film.duree_minutes} min</p>
         </article>`).join('') + '</div>');
-    contenu.querySelectorAll('.carte').forEach((carte, position) => carte.onclick = () => afficherSeances(films[position]));
+    contenu.querySelectorAll('.carte').forEach((carte, position) => carte.onclick = () => naviguer(`/film/${films[position].id}`));
 }
 
 // Les séances sont affichées par semaine, regroupées par jour
@@ -67,22 +92,21 @@ async function afficherSeances(film, premierJour = 0)
         <div class="pagination">
             <button id="boutonPrecedent" class="secondaire" ${premierJour === 0 ? 'hidden' : ''}>${icone('chevron_left')}Précédent</button>
             <button id="boutonSuivant" class="secondaire" ${premierJour + JOURS_PAR_PAGE >= jours.length ? 'hidden' : ''}>Suivant${icone('chevron_right')}</button>
-        </div>`, afficherFilms);
+        </div>`, () => naviguer('/'));
 
     contenu.querySelectorAll('li:not(.complet)').forEach((ligne) =>
     {
-        const seance = seances.find((seance) => seance.id === Number(ligne.dataset.seance));
-        ligne.onclick = () => afficherPlan(film, seance, premierJour);
+        ligne.onclick = () => naviguer(`/film/${film.id}/seance/${ligne.dataset.seance}`, premierJour);
     });
-    contenu.querySelector('#boutonPrecedent').onclick = () => afficherSeances(film, premierJour - JOURS_PAR_PAGE);
-    contenu.querySelector('#boutonSuivant').onclick = () => afficherSeances(film, premierJour + JOURS_PAR_PAGE);
+    contenu.querySelector('#boutonPrecedent').onclick = () => naviguer(`/film/${film.id}`, premierJour - JOURS_PAR_PAGE);
+    contenu.querySelector('#boutonSuivant').onclick = () => naviguer(`/film/${film.id}`, premierJour + JOURS_PAR_PAGE);
 }
 
 async function afficherPlan(film, seance, premierJour)
 {
     let places = [];
     let placesChoisies = [];
-    const retour = () => afficherSeances(film, premierJour);
+    const retour = () => naviguer(`/film/${film.id}`, premierJour);
     changerVue(`
         <h2>${echapper(film.titre)}</h2>
         <p>${icone('event')}${formaterDate(seance.debut)} · ${icone('meeting_room')}${echapper(seance.salle)} ${badgeSalle(seance.type_salle)}</p>
@@ -171,7 +195,8 @@ function afficherPaiement(reservation, retour)
         evenement.preventDefault();
         try
         {
-            afficherBillet(await appelerApi('POST', `reservations/${reservation.id}/paiement`, saisie(evenement.target)));
+            const billet = await appelerApi('POST', `reservations/${reservation.id}/paiement`, saisie(evenement.target));
+            naviguer(`/billet/${billet.code}`);
         }
         catch (erreur)
         {
@@ -192,15 +217,14 @@ function afficherBillet(billet)
             <div id="qrCode"></div>
             <code>${billet.code}</code>
             <p>${icone('mail')}En production, ce billet sera aussi envoyé à ${echapper(billet.email)}.</p>
-        </div>`, afficherFilms);
+        </div>`, () => naviguer('/'));
     new QRCode(contenu.querySelector('#qrCode'), billet.code);
 }
 
 async function demarrer()
 {
     await chargerCompte();
-    const codeBillet = new URLSearchParams(location.search).get('billet');
-    codeBillet ? afficherBillet(await appelerApi('GET', `billets/${codeBillet}`)) : afficherFilms();
+    afficherPage();
 }
 
 // Un administrateur qui se connecte est envoyé vers le back-office
@@ -212,4 +236,5 @@ document.addEventListener('connexion', () =>
     }
 });
 
+window.onpopstate = afficherPage;
 demarrer();
