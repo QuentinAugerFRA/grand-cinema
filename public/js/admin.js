@@ -36,7 +36,8 @@ function confirmer(question)
     return new Promise((repondre) => fenetre.onclose = () => repondre(fenetre.returnValue === 'oui'));
 }
 
-function afficherOnglet(onglet)
+// Chaque onglet a sa propre adresse : /admin/films, /admin/seances...
+function afficherOnglet(onglet = location.pathname.split('/')[2] || 'films')
 {
     document.querySelectorAll('nav button').forEach((bouton) => bouton.classList.toggle('actif', bouton.dataset.onglet === onglet));
     document.querySelectorAll('section').forEach((section) => section.classList.toggle('actif', section.id === onglet));
@@ -163,7 +164,7 @@ async function demarrer()
     formulairePeriode.fin.value = dateLocale(30);
     formulaireRecherche.jour.value = dateLocale();
     formulaireControle.jour.value = dateLocale();
-    afficherOnglet('films');
+    afficherOnglet();
     afficherFilms();
     afficherSeances();
     afficherStatistiques();
@@ -175,7 +176,12 @@ async function demarrer()
 document.querySelector('#boutonAjouterFilm').onclick = () => ouvrirFilm();
 document.querySelector('#boutonPlanifierSeance').onclick = () => fenetreSeance.showModal();
 
-document.querySelector('nav').onclick = (evenement) => afficherOnglet(evenement.target.closest('button').dataset.onglet);
+document.querySelector('nav').onclick = (evenement) =>
+{
+    history.pushState(null, '', `/admin/${evenement.target.closest('button').dataset.onglet}`);
+    afficherOnglet();
+};
+window.onpopstate = () => afficherOnglet();
 
 formulaireFilm.onsubmit = async (evenement) =>
 {
