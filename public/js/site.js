@@ -41,7 +41,8 @@ async function afficherFilms()
         <article class="carte">
             <img src="${echapper(film.affiche)}" alt="">
             <h3>${echapper(film.titre)}</h3>
-            <p>${echapper(film.genre)} · ${icone('schedule')}${film.duree_minutes} min</p>
+            <p>${echapper(film.genre)}</p>
+            <p>${icone('schedule')}${film.duree_minutes} min</p>
         </article>`).join('') + '</div>');
     contenu.querySelectorAll('.carte').forEach((carte, position) => carte.onclick = () => afficherSeances(films[position]));
 }
@@ -202,7 +203,7 @@ document.addEventListener('connexion', () =>
 {
     if (compte.administrateur)
     {
-        location.href = 'admin.html';
+        location.href = 'admin';
     }
 });
 

@@ -18,6 +18,17 @@ Options -Indexes
 
 RewriteEngine On
 
+# Adresses sans extension : /admin.html est redirigé vers /admin, /index.html vers /
+RewriteCond %{THE_REQUEST} \s/index\.html[\s?]
+RewriteRule ^ / [R=301,L]
+RewriteCond %{THE_REQUEST} \s/([^.\s?/]+)\.html[\s?]
+RewriteRule ^ /%1 [R=301,L]
+
+# /admin sert le fichier admin.html, / sert index.html
+RewriteRule ^$ index.html [L]
+RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+RewriteRule ^([^./]+)$ $1.html [L]
+
 # Transmet l'en-tête Authorization à PHP
 RewriteCond %{HTTP:Authorization} .+
 RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
