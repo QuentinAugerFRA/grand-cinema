@@ -1,0 +1,27 @@
+DirectoryIndex index.html
+
+# Le contenu des dossiers n'est jamais listé, les fichiers cachés ne sont jamais servis
+Options -Indexes
+<FilesMatch "^\.">
+    Require all denied
+</FilesMatch>
+
+# En-têtes de sécurité envoyés avec toutes les pages
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set X-Frame-Options "DENY"
+    Header set Referrer-Policy "strict-origin-when-cross-origin"
+    Header set Strict-Transport-Security "max-age=31536000" "expr=%{HTTPS} == 'on'"
+    # Seuls les scripts, styles, polices et images des sources listées sont chargés (protection XSS)
+    Header set Content-Security-Policy "default-src 'self'; script-src 'self' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src https://fonts.gstatic.com; img-src 'self' https: data:; frame-ancestors 'none'"
+</IfModule>
+
+RewriteEngine On
+
+# Transmet l'en-tête Authorization à PHP
+RewriteCond %{HTTP:Authorization} .+
+RewriteRule ^ - [E=HTTP_AUTHORIZATION:%0]
+
+# Tout ce qui n'est pas un fichier existant est traité par Symfony
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L]

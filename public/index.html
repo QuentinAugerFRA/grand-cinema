@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Le Grand Cinéma</title>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <header>
+        <a href="index.html"><span class="material-icons">movie</span>Le Grand Cinéma</a>
+        <button id="boutonCompte"></button>
+    </header>
+
+    <main id="contenu"></main>
+
+    <dialog id="fenetreConnexion">
+        <form id="formulaireConnexion">
+            <h2 id="titreConnexion">Connexion</h2>
+            <input name="email" type="email" placeholder="Adresse e-mail" required>
+            <input name="motDePasse" type="password" placeholder="Mot de passe (8 caractères minimum)" minlength="8" required>
+            <p id="informationInscription" hidden>En production, un e-mail de confirmation sera envoyé. Ici, le compte est activé immédiatement.</p>
+            <button id="boutonValider"><span class="material-icons">login</span>Se connecter</button>
+            <button type="button" id="boutonBascule" class="secondaire"><span class="material-icons">person_add</span>Créer un compte</button>
+            <button type="button" class="discret fermer"><span class="material-icons">close</span>Fermer</button>
+        </form>
+    </dialog>
+    <footer>
+        Le Grand Cinéma – version <span id="version"></span> · Réalisé par Quentin Auger en 2026 · <a href="mentions-legales.html">Mentions légales</a>
+    </footer>
+    <p id="message" popover="manual"></p>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+    <script src="js/commun.js"></script>
+    <script src="js/site.js"></script>
+</body>
+</html>

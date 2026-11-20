@@ -1,0 +1,8 @@
+/.env.local
+/.env.*.local
+/var/
+/vendor/
+/couverture/
+/.phpunit.cache/
+/config/reference.php
+/public/affiches/

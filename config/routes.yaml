@@ -1,0 +1,11 @@
+controleurs:
+    resource: ../src/Controller/
+    type: attribute
+
+accueil:
+    path: /
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults: { path: /index.html }
+
+deconnexion:
+    path: /api/deconnexion

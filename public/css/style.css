@@ -1,0 +1,450 @@
+:root
+{
+    --principale: #e63946;
+    --sombre: #1d3557;
+    --fond: #f1f3f6;
+    --bordure: #d9dee6;
+    --succes: #2a9d8f;
+}
+
+*
+{
+    box-sizing: border-box;
+}
+
+body
+{
+    margin: 0;
+    font-family: system-ui, sans-serif;
+    color: var(--sombre);
+    background: var(--fond);
+}
+
+header
+{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 16px;
+    background: var(--sombre);
+}
+
+header a
+{
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+.material-icons
+{
+    font-size: 1.3em;
+    vertical-align: middle;
+}
+
+:is(p, h2, strong, td) > .material-icons
+{
+    margin-right: 4px;
+}
+
+main
+{
+    max-width: 960px;
+    margin: auto;
+    padding: 16px;
+}
+
+h2
+{
+    margin: 16px 0;
+}
+
+button, .bouton
+{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border: 0;
+    border-radius: 4px;
+    color: white;
+    background: var(--principale);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+button:disabled
+{
+    opacity: .4;
+    cursor: not-allowed;
+}
+
+.secondaire
+{
+    background: var(--sombre);
+}
+
+.discret
+{
+    padding: 4px;
+    color: var(--sombre);
+    background: none;
+}
+
+input, select
+{
+    padding: 10px;
+    border: 1px solid var(--bordure);
+    border-radius: 4px;
+    background: white;
+    font: inherit;
+}
+
+form
+{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+/* Films */
+
+.grille
+{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+}
+
+.carte
+{
+    background: white;
+    border-radius: 4px;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.carte img
+{
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+}
+
+.carte h3, .carte p
+{
+    margin: 8px;
+}
+
+/* Séances */
+
+.jour
+{
+    margin: 24px 0 8px;
+}
+
+.jour::first-letter
+{
+    text-transform: uppercase;
+}
+
+.liste
+{
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.liste li
+{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding: 12px;
+    background: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.liste li > *
+{
+    white-space: nowrap;
+}
+
+.liste .fin
+{
+    margin-left: auto;
+    color: var(--principale);
+    font-weight: bold;
+}
+
+.liste .complet
+{
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+.badge
+{
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    color: white;
+    background: var(--sombre);
+    font-size: .8rem;
+}
+
+.badge .material-icons
+{
+    font-size: 1rem;
+}
+
+.pagination
+{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+}
+
+[hidden]
+{
+    visibility: hidden;
+}
+
+/* Plan de salle */
+
+.ecran
+{
+    margin: 0 0 16px;
+    padding: 4px;
+    color: white;
+    background: var(--sombre);
+    text-align: center;
+}
+
+#plan
+{
+    display: grid;
+    gap: 4px;
+    margin-bottom: 16px;
+}
+
+.place
+{
+    aspect-ratio: 1;
+    padding: 0;
+    background: var(--succes);
+}
+
+.place.occupee
+{
+    background: var(--bordure);
+    opacity: 1;
+}
+
+.place.choisie
+{
+    background: var(--principale);
+}
+
+.legende
+{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: .9rem;
+}
+
+.legende .place
+{
+    width: 16px;
+    border-radius: 4px;
+}
+
+/* Billet */
+
+.billet
+{
+    max-width: 320px;
+    margin: auto;
+    padding: 24px;
+    background: white;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.billet img
+{
+    margin: 16px auto;
+}
+
+.billet code
+{
+    word-break: break-all;
+}
+
+/* Administration */
+
+nav
+{
+    display: flex;
+    overflow-x: auto;
+    background: white;
+}
+
+nav button
+{
+    flex: 1;
+    justify-content: center;
+    border-radius: 0;
+    color: var(--sombre);
+    background: none;
+}
+
+nav button.actif
+{
+    color: var(--principale);
+    box-shadow: inset 0 -3px var(--principale);
+}
+
+section
+{
+    display: none;
+}
+
+section > button
+{
+    margin-bottom: 16px;
+}
+
+section.actif
+{
+    display: block;
+}
+
+table
+{
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td
+{
+    padding: 10px;
+    border-bottom: 1px solid var(--fond);
+    text-align: left;
+}
+
+.alerte
+{
+    color: var(--principale);
+    font-weight: bold;
+}
+
+/* Connexion et messages */
+
+dialog
+{
+    width: 420px;
+    max-width: 90%;
+    border: 0;
+    border-radius: 4px;
+    padding: 24px;
+}
+
+dialog form
+{
+    flex-direction: column;
+    margin: 0;
+    text-align: center;
+}
+
+.vertical
+{
+    flex-direction: column;
+    max-width: 420px;
+}
+
+#formulaireRecherche [name=recherche]
+{
+    flex: 1;
+    min-width: 260px;
+}
+
+.vignette
+{
+    display: block;
+    width: 40px;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+.valide
+{
+    color: var(--succes);
+}
+
+#boutonRetour
+{
+    margin-bottom: 16px;
+}
+
+/* Sur mobile, le bouton de déconnexion n'affiche que son icône */
+@media (max-width: 600px)
+{
+    #boutonCompte .libelle
+    {
+        display: none;
+    }
+}
+
+footer
+{
+    padding: 24px 16px;
+    font-size: .8rem;
+    text-align: center;
+    opacity: .6;
+}
+
+footer a
+{
+    color: inherit;
+}
+
+label
+{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: .9rem;
+    text-align: left;
+}
+
+#message
+{
+    inset: auto auto 16px 50%;
+    transform: translateX(-50%);
+    width: max-content;
+    max-width: 90%;
+    margin: 0;
+    padding: 12px 20px;
+    border: 0;
+    border-radius: 4px;
+    color: white;
+    background: var(--sombre);
+    text-align: center;
+}

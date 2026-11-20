@@ -1,0 +1,24 @@
+security:
+    password_hashers:
+        App\Security\Utilisateur: auto
+
+    providers:
+        utilisateurs:
+            id: App\Security\FournisseurUtilisateur
+
+    firewalls:
+        principal:
+            json_login:
+                check_path: /api/connexion
+                username_path: email
+                password_path: motDePasse
+            # Après 5 échecs de connexion, le compte est bloqué 15 minutes (attaque par force brute)
+            login_throttling:
+                max_attempts: 5
+                interval: '15 minutes'
+            logout:
+                path: /api/deconnexion
+
+    access_control:
+        - { path: ^/api/admin, roles: ROLE_ADMIN }
+        - { path: ^/api/reservations, roles: ROLE_USER }
