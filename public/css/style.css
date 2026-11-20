@@ -285,6 +285,13 @@ form
     text-align: center;
 }
 
+/* La taille d'une place dépend de la hauteur de l'écran : toute la salle reste visible */
+.salle
+{
+    max-width: calc(var(--colonnes) * max(18px, (100vh - 420px) / var(--rangees)));
+    margin: 0 auto;
+}
+
 #plan
 {
     display: grid;
