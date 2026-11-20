@@ -6,6 +6,14 @@ Les versions suivent la gestion sémantique de version : MAJEUR.MINEUR.CORRECTIF
 - MINEUR : nouvelle fonctionnalité, compatible avec l'existant.
 - CORRECTIF : correction d'anomalie.
 
+## 1.1.2 – 20/11/2026
+
+- Interface : icônes alignées verticalement avec le texte.
+- Interface : pied de page toujours en bas de l'écran, barre de défilement toujours visible, logo en dégradé.
+- Accueil : genre et durée du film sur deux lignes.
+- Back-office : onglets colorés au survol, logo bleu.
+- Adresses sans extension : `/admin`, `/mentions-legales`, `/documentation`.
+
 ## 1.1.1 – 20/11/2026
 
 - Interface : boutons éclaircis au survol.

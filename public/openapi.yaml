@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Le Grand Cinéma – API de réservation
-  version: 1.1.1
+  version: 1.1.2
   description: >
     API REST de l'application de réservation. L'authentification repose sur un cookie de session,
     obtenu avec POST /connexion. Les routes /admin sont réservées au rôle administrateur.

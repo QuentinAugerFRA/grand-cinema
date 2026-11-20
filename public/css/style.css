@@ -15,8 +15,16 @@
     box-sizing: border-box;
 }
 
+html
+{
+    overflow-y: scroll;
+}
+
 body
 {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
     margin: 0;
     font-family: system-ui, sans-serif;
     color: var(--sombre);
@@ -44,10 +52,26 @@ header a
     text-decoration: none;
 }
 
+header a:first-child .material-icons
+{
+    color: transparent;
+    background: linear-gradient(180deg, white 45%, #ffc98f);
+    -webkit-background-clip: text;
+    background-clip: text;
+}
+
+header a[href=admin] .material-icons
+{
+    background-image: linear-gradient(180deg, white 45%, #8ec5ff);
+}
+
 .material-icons
 {
+    position: relative;
+    top: .05em;
     font-size: 1.3em;
-    vertical-align: middle;
+    line-height: 1;
+    vertical-align: -.18em;
 }
 
 :is(p, h2, strong, td) > .material-icons
@@ -57,8 +81,10 @@ header a
 
 main
 {
+    flex: 1;
+    width: 100%;
     max-width: 960px;
-    margin: auto;
+    margin: 0 auto;
     padding: 16px;
 }
 
@@ -159,6 +185,15 @@ form
 .carte h3, .carte p
 {
     margin: 8px;
+}
+
+.carte p
+{
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: -4px;
+    font-size: .9rem;
 }
 
 /* Séances */
@@ -327,6 +362,13 @@ nav button
     border-radius: 0;
     color: var(--sombre);
     background: none;
+    transition: color .2s, background-color .2s;
+}
+
+nav button:hover
+{
+    color: var(--principale);
+    background-color: rgb(230 57 70 / 8%);
 }
 
 nav button.actif

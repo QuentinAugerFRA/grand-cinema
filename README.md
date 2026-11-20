@@ -42,8 +42,8 @@ Les identifiants de la base se règlent dans un fichier `.env.local`, qui n'est 
 | Page | Adresse |
 |---|---|
 | Site Web | http://localhost:8000/ |
-| Back-office | http://localhost:8000/admin.html |
-| Documentation de l'API | http://localhost:8000/documentation.html |
+| Back-office | http://localhost:8000/admin |
+| Documentation de l'API | http://localhost:8000/documentation |
 
 ## Comptes de démonstration
 

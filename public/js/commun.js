@@ -106,7 +106,7 @@ boutonCompte.onclick = async () =>
         return afficherConnexion();
     }
     await fetch('api/deconnexion');
-    location.href = 'index.html';
+    location.href = './';
 };
 
 formulaireConnexion.onsubmit = (evenement) =>

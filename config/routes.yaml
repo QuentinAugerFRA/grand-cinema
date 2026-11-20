@@ -7,5 +7,21 @@ accueil:
     controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
     defaults: { path: /index.html }
 
+# Sans Apache (php -S), les adresses sans extension sont redirigées vers le fichier .html
+administration:
+    path: /admin
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults: { path: /admin.html }
+
+mentions_legales:
+    path: /mentions-legales
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults: { path: /mentions-legales.html }
+
+documentation:
+    path: /documentation
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults: { path: /documentation.html }
+
 deconnexion:
     path: /api/deconnexion
