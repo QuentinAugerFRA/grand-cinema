@@ -1,0 +1,422 @@
+openapi: 3.0.3
+info:
+  title: Le Grand Cinéma – API de réservation
+  version: 1.0.0
+  description: >
+    API REST de l'application de réservation. L'authentification repose sur un cookie de session,
+    obtenu avec POST /connexion. Les routes /admin sont réservées au rôle administrateur.
+    Toute requête POST, PUT ou DELETE doit porter l'en-tête X-Requested-With: XMLHttpRequest.
+servers:
+  - url: api
+
+# Les routes sont publiques, sauf celles qui déclarent la session
+security: []
+
+tags:
+  - name: Compte
+  - name: Programmation
+  - name: Réservation
+  - name: Administration
+
+components:
+  securitySchemes:
+    session:
+      type: apiKey
+      in: cookie
+      name: PHPSESSID
+  schemas:
+    Erreur:
+      type: object
+      properties:
+        erreur: { type: string, example: Une réservation contient de 1 à 10 places. }
+    Identifiants:
+      type: object
+      required: [email, motDePasse]
+      properties:
+        email: { type: string, format: email, example: spectateur@grandcinema.fr }
+        motDePasse: { type: string, minLength: 8, example: Spectateur2026! }
+    Compte:
+      type: object
+      properties:
+        email: { type: string, format: email }
+        administrateur: { type: boolean }
+    Film:
+      type: object
+      properties:
+        id: { type: integer }
+        titre: { type: string }
+        duree_minutes: { type: integer }
+        genre: { type: string }
+        affiche: { type: string, format: uri }
+    SaisieFilm:
+      type: object
+      required: [titre, dureeMinutes, genre, affiche]
+      properties:
+        titre: { type: string }
+        dureeMinutes: { type: integer, minimum: 1 }
+        genre: { type: string }
+        affiche: { type: string, format: uri }
+    Seance:
+      type: object
+      properties:
+        id: { type: integer }
+        debut: { type: string, example: '2026-11-20 20:30:00' }
+        tarif: { type: string, example: '9.00' }
+        salle: { type: string, example: Salle 1 }
+        type_salle: { type: string, example: Premium / IMAX }
+        nombre_blocs: { type: integer, enum: [2, 3], description: Blocs de fauteuils séparés par des allées }
+        capacite: { type: integer }
+        places_occupees: { type: integer }
+    Place:
+      type: object
+      properties:
+        id: { type: integer }
+        rangee: { type: string, example: A }
+        numero: { type: integer }
+        occupee: { type: integer, enum: [0, 1] }
+    Billet:
+      type: object
+      properties:
+        id: { type: integer }
+        code: { type: string, description: Code unique affiché en QR code }
+        montant: { type: string, example: '18.00' }
+        valide_le: { type: string, nullable: true }
+        seance_id: { type: integer }
+        email: { type: string, format: email }
+        titre: { type: string }
+        debut: { type: string }
+        salle: { type: string }
+        places: { type: string, example: 'A1, A2' }
+  responses:
+    Erreur:
+      description: Requête refusée, le message explique la raison
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Erreur' }
+
+paths:
+  /version:
+    get:
+      tags: [Compte]
+      summary: Numéro de version de l'application
+      responses:
+        '200':
+          description: Version au format MAJEUR.MINEUR.CORRECTIF
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version: { type: string, example: 1.0.0 }
+  /inscription:
+    post:
+      tags: [Compte]
+      summary: Créer un compte spectateur
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Identifiants' }
+      responses:
+        '201': { description: Compte créé }
+        '400': { $ref: '#/components/responses/Erreur' }
+        '409': { $ref: '#/components/responses/Erreur' }
+  /connexion:
+    post:
+      tags: [Compte]
+      summary: Se connecter
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Identifiants' }
+      responses:
+        '200':
+          description: Compte connecté
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Compte' }
+        '401': { description: Identifiants incorrects }
+  /compte:
+    get:
+      tags: [Compte]
+      summary: Compte connecté, ou null
+      responses:
+        '200':
+          description: Compte connecté
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Compte' }
+  /deconnexion:
+    get:
+      tags: [Compte]
+      summary: Se déconnecter
+      responses:
+        '302': { description: Session fermée }
+
+  /films:
+    get:
+      tags: [Programmation]
+      summary: Films à l'affiche (ayant au moins une séance à venir)
+      responses:
+        '200':
+          description: Liste des films
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Film' }
+  /films/{filmId}/seances:
+    get:
+      tags: [Programmation]
+      summary: Séances à venir d'un film
+      parameters:
+        - { name: filmId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Liste des séances
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Seance' }
+
+  /seances/{seanceId}/places:
+    get:
+      tags: [Réservation]
+      summary: Plan de salle d'une séance, avec l'état de chaque place
+      parameters:
+        - { name: seanceId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '200':
+          description: Liste des places
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Place' }
+  /reservations:
+    post:
+      tags: [Réservation]
+      summary: Réserver de 1 à 10 places, bloquées 10 minutes en attendant le paiement
+      security: [{ session: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [seanceId, placeIds]
+              properties:
+                seanceId: { type: integer }
+                placeIds: { type: array, minItems: 1, maxItems: 10, items: { type: integer } }
+      responses:
+        '201':
+          description: Réservation en attente de paiement
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id: { type: integer }
+                  montant: { type: number, example: 18 }
+        '400': { $ref: '#/components/responses/Erreur' }
+        '401': { $ref: '#/components/responses/Erreur' }
+        '404': { $ref: '#/components/responses/Erreur' }
+        '409': { $ref: '#/components/responses/Erreur' }
+  /reservations/{reservationId}/paiement:
+    post:
+      tags: [Réservation]
+      summary: Payer une réservation (paiement simulé)
+      description: Une carte de 16 chiffres est acceptée, sauf si elle se termine par 0000.
+      security: [{ session: [] }]
+      parameters:
+        - { name: reservationId, in: path, required: true, schema: { type: integer } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [numeroCarte]
+              properties:
+                numeroCarte: { type: string, example: '4242424242424242' }
+      responses:
+        '200':
+          description: Paiement accepté, billet délivré
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Billet' }
+        '402': { $ref: '#/components/responses/Erreur' }
+        '404': { $ref: '#/components/responses/Erreur' }
+  /billets/{code}:
+    get:
+      tags: [Réservation]
+      summary: Consulter un billet à partir de son code
+      parameters:
+        - { name: code, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Billet
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Billet' }
+        '404': { $ref: '#/components/responses/Erreur' }
+
+  /admin/films:
+    get:
+      tags: [Administration]
+      summary: Tous les films
+      security: [{ session: [] }]
+      responses:
+        '200':
+          description: Liste des films
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Film' }
+    post:
+      tags: [Administration]
+      summary: Ajouter un film
+      security: [{ session: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SaisieFilm' }
+      responses:
+        '201': { description: Film créé }
+        '400': { $ref: '#/components/responses/Erreur' }
+  /admin/affiches:
+    post:
+      tags: [Administration]
+      summary: Envoyer l'affiche d'un film
+      description: Image JPEG, PNG ou WebP de 2 Mo maximum. L'adresse renvoyée est à utiliser dans le champ affiche du film.
+      security: [{ session: [] }]
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [affiche]
+              properties:
+                affiche: { type: string, format: binary }
+      responses:
+        '201':
+          description: Affiche enregistrée
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  affiche: { type: string, example: affiches/3f2a9c1e5b7d4a60.png }
+        '400': { $ref: '#/components/responses/Erreur' }
+  /admin/films/{filmId}:
+    parameters:
+      - { name: filmId, in: path, required: true, schema: { type: integer } }
+    put:
+      tags: [Administration]
+      summary: Modifier un film sans réservation
+      security: [{ session: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SaisieFilm' }
+      responses:
+        '200': { description: Film modifié }
+        '409': { $ref: '#/components/responses/Erreur' }
+    delete:
+      tags: [Administration]
+      summary: Supprimer un film sans réservation
+      security: [{ session: [] }]
+      responses:
+        '204': { description: Film supprimé }
+        '409': { $ref: '#/components/responses/Erreur' }
+  /admin/salles:
+    get:
+      tags: [Administration]
+      summary: Salles et capacités
+      security: [{ session: [] }]
+      responses:
+        '200': { description: Liste des salles }
+  /admin/seances:
+    post:
+      tags: [Administration]
+      summary: Planifier une séance
+      security: [{ session: [] }]
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [filmId, salleId, debut, tarif]
+              properties:
+                filmId: { type: integer }
+                salleId: { type: integer }
+                debut: { type: string, example: '2026-11-20T20:30' }
+                tarif: { type: number, example: 9 }
+      responses:
+        '201': { description: Séance créée }
+        '400': { $ref: '#/components/responses/Erreur' }
+        '409': { $ref: '#/components/responses/Erreur' }
+  /admin/reservations:
+    get:
+      tags: [Administration]
+      summary: Réservations d'une séance, avec recherche par e-mail ou par numéro
+      security: [{ session: [] }]
+      parameters:
+        - { name: seanceId, in: query, required: true, schema: { type: integer } }
+        - { name: recherche, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Liste des réservations }
+  /admin/reservations/{reservationId}/annulation:
+    post:
+      tags: [Administration]
+      summary: Annuler et rembourser une réservation
+      security: [{ session: [] }]
+      parameters:
+        - { name: reservationId, in: path, required: true, schema: { type: integer } }
+      responses:
+        '204': { description: 'Réservation annulée, places remises en vente' }
+        '404': { $ref: '#/components/responses/Erreur' }
+  /admin/billets/{code}/validation:
+    post:
+      tags: [Administration]
+      summary: Valider un billet à l'entrée de la salle
+      security: [{ session: [] }]
+      parameters:
+        - { name: code, in: path, required: true, schema: { type: string } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [seanceId]
+              properties:
+                seanceId: { type: integer }
+      responses:
+        '200':
+          description: Billet valide
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Billet' }
+        '404': { $ref: '#/components/responses/Erreur' }
+        '409': { $ref: '#/components/responses/Erreur' }
+  /admin/statistiques/remplissage:
+    get:
+      tags: [Administration]
+      summary: Taux de remplissage sur une période
+      security: [{ session: [] }]
+      parameters:
+        - { name: debut, in: query, schema: { type: string, format: date } }
+        - { name: fin, in: query, schema: { type: string, format: date } }
+        - { name: regroupement, in: query, schema: { type: string, enum: [seance, salle] } }
+        - { name: format, in: query, schema: { type: string, enum: [json, csv] } }
+      responses:
+        '200': { description: 'Capacité, places vendues et taux par séance ou par salle' }
+  /admin/statistiques/affluence:
+    get:
+      tags: [Administration]
+      summary: Places réservées par jour et par heure, comparées à l'année précédente
+      security: [{ session: [] }]
+      parameters:
+        - { name: debut, in: query, schema: { type: string, format: date } }
+        - { name: fin, in: query, schema: { type: string, format: date } }
+      responses:
+        '200': { description: Affluence par créneau }
